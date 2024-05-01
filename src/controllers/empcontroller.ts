@@ -1,6 +1,7 @@
 import Router from 'express';
 import { eschema } from '../Schemas/empSchema';
 import {UpdateEmpData, insertEmpData} from '../Schemas/Typecheker'
+import { ApiResponse, ErrorResponse } from '../utils/statusMesg';
 
 
 const router=Router();
@@ -14,8 +15,9 @@ router.post('/create',async (req,res)=>{
         })
         return;
     }
-    await eschema.insertMany(craetePayloads).then((result)=>{
-          res.send({status:200,message:"Save Emp Data"})
+    await eschema.insertMany(craetePayloads).then((result:any)=>{
+          res.send(new ApiResponse(200,'Save Emp Date',result))
+         
     })
 })
 //const updatePayloads=req.params.id;
@@ -48,11 +50,12 @@ router.patch('/update/:id',async(req,res)=>{
 //all data
 router.get('/getEmp',async(req,res)=>{
     let body=req.body;
-    await eschema.find({}).then((result)=>{
+    await eschema.find({}).then((result:any)=>{
         if(result.length>0){
-            res.send({status:200,message:"Data find",data:result})
+            res.send(new ApiResponse(200,'get Emp Date',result))
+            
         }else{
-            res.send({status:201,message:"No Data find",data:result})
+            res.send(new ErrorResponse(201,'not get Emp Date'))
         }
     }).catch((err)=>{
         res.send({status:400,message:err.message})
