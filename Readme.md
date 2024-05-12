@@ -50,3 +50,11 @@ Overall, zod is a powerful tool for ensuring the correctness and integrity of yo
 both at compile-time and runtime. 
 It's particularly useful in scenarios where you need to enforce strict data validation rules and maintain type safety throughout your codebase.
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ what is rate limiting and how to  implement
+
+ why rate limiting imp.
+ system breaks down under the over loads and we insure that this will not happend again.
+ --what?
+    limits the number of request in given period 
+    

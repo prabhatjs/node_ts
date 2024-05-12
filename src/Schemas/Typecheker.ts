@@ -1,14 +1,14 @@
 import zod from 'zod'
 
 export const insertEmpData=zod.object({
-    empno:zod.number(),
+    empno:zod.number().lte(10),
     ename:zod.string(),
     sal:zod.number()
 })
 export const UpdateEmpData=zod.object({
-    empno:zod.number(),
+   empno:zod.number(),
     ename:zod.string(),
-    sal:zod.number()
+        sal:zod.number()
 });
 export const DeleteEmpData=zod.object({
     empno:zod.number()

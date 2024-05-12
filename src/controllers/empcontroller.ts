@@ -4,6 +4,27 @@ import {UpdateEmpData, insertEmpData} from '../Schemas/Typecheker'
 import { ApiResponse, ErrorResponse } from '../utils/statusMesg';
 
 
+//validation
+/**
+ * Request Level validation
+ * Database level validation
+ * 
+ * Request level validation
+ * ----------------------------
+ * Body Should not be empty
+ * empno should not be empty
+ * ename should not be empty
+ * 
+ * empno should contains only numbers
+ * ename should not contains number
+ * sal conatins only number
+ * 
+ * 
+ * Ename length should be less than 10
+ */
+
+
+
 const router=Router();
 
 router.post('/create',async (req,res)=>{
@@ -15,10 +36,19 @@ router.post('/create',async (req,res)=>{
         })
         return;
     }
-    await eschema.insertMany(craetePayloads).then((result:any)=>{
-          res.send(new ApiResponse(200,'Save Emp Date',result))
-         
+    //check empno is already exits--
+    await eschema.find({empno:req.body.empno}).then(async (isExist)=>{
+        if(isExist.length>0){
+            res.send(new ErrorResponse(201,'Empno is allready Exists'));
+        }
+        else{
+            await eschema.insertMany(req.body).then((result:any)=>{
+                res.send(new ApiResponse(200,'Save Emp Date',result))
+               
+          })
+        }
     })
+   
 })
 //const updatePayloads=req.params.id;
 // console.log(updatePayloads);
@@ -33,23 +63,35 @@ router.post('/create',async (req,res)=>{
 // await eschema.findByIdAndUpdate(req.params.id,req.body).then((result)=>{
 //     res.send({status:200,mesg:"Update Data successfully"});
 // })
-router.patch('/update/:id',async(req,res)=>{
-    try {
-        const updateEmp=await eschema.findByIdAndUpdate(req.params.id,req.body);
-        res.status(200).json({
-            message:'Update Successfully',
-            data:{
-                updateEmp
+router.put('/update/:id',async(req,res)=>{
+            const id=req.params.id;
+            const newData=req.body;
+            try {
+                const validateData=UpdateEmpData.safeParse(newData);
+                const updateData=await eschema.findByIdAndUpdate(id,validateData,{new:true});
+                if (!updateData) {
+                    return res.status(404).json({ error: 'User not found' });
+                  }
+                  res.json(updateData)
+            } catch (error) {
+                console.log(error);
             }
-        })
-    } catch (error) {
-        console.log(error);
-    }
+
 })
+
+        // router.put('/update/:empno',async(req,res)=>{
+        //         const emp
+        // })
+
+
+
 
 //all data
 router.get('/getEmp',async(req,res)=>{
     let body=req.body;
+    
+    let ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
+    console.log(ip);
     await eschema.find({}).then((result:any)=>{
         if(result.length>0){
             res.send(new ApiResponse(200,'get Emp Date',result))
